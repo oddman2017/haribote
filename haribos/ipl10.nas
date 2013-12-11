@@ -77,6 +77,7 @@ next:
 
 ; 読み終わったのでharibote.sysを実行だ！
 
+		MOV		[0x0ff0],CH		; IPLがどこまで読んだのかをメモ
 		JMP		0xc200
 
 error:
