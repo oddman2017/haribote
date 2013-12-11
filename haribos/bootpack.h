@@ -9,6 +9,8 @@ struct BOOTINFO { /* 0x0ff0-0x0fff */
 };
 #define ADR_BOOTINFO	0x00000ff0
 
+#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+
 /* naskfunc.nas */
 void io_hlt(void);
 void io_cli(void);
