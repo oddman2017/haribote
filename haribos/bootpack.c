@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 unsigned int memtest(unsigned int start, unsigned int end);
-unsigned int memtest_sub(unsigned int start, unsigned int end);
 
 void HariMain(void)
 {
@@ -124,28 +123,5 @@ unsigned int memtest(unsigned int start, unsigned int end)
 		store_cr0(cr0);
 	}
 
-	return i;
-}
-
-unsigned int memtest_sub(unsigned int start, unsigned int end)
-{
-	unsigned int i, old, pat0 = 0xaa55aa55, pat1 = 0x55aa55aa;
-	volatile unsigned int *p;
-	for (i = start; i <= end; i += 0x1000) {
-		p = (unsigned int *) (i + 0xffc);
-		old = *p;			/* いじる前の値を覚えておく */
-		*p = pat0;			/* ためしに書いてみる */
-		*p ^= 0xffffffff;	/* そしてそれを反転してみる */
-		if (*p != pat1) {	/* 反転結果になったか？ */
-not_memory:
-			*p = old;
-			break;
-		}
-		*p ^= 0xffffffff;	/* もう一度反転してみる */
-		if (*p != pat0) {	/* 元に戻ったか？ */
-			goto not_memory;
-		}
-		*p = old;			/* いじった値を元に戻す */
-	}
 	return i;
 }
