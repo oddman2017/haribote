@@ -34,17 +34,10 @@ struct BOOTINFO {
 
 void HariMain(void)
 {
-	char *vram;
-	int xsize, ysize;
-	struct BOOTINFO *binfo;
+	struct BOOTINFO *binfo = (struct BOOTINFO *) 0x0ff0;
 
 	init_palette();
-	binfo = (struct BOOTINFO *) 0x0ff0;
-	xsize = binfo->scrnx;
-	ysize = (*binfo).scrny;
-	vram = (*binfo).vram;
-
-	init_screen(vram, xsize, ysize);
+	init_screen(binfo->vram, binfo->scrnx, binfo->scrny);
 
 	for (;;) {
 		io_hlt();
@@ -97,9 +90,8 @@ void boxfill8(unsigned char *vram, int xsize, unsigned char c, int x0, int y0, i
 {
 	int x, y;
 	for (y = y0; y <= y1; y++) {
-		for (x = x0; x <= x1; x++) {
+		for (x = x0; x <= x1; x++)
 			vram[y * xsize + x] = c;
-		}
 	}
 	return;
 }
