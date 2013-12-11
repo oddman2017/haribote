@@ -1,42 +1,26 @@
 /* GDTやIDTなどの、 descriptor table 関係 */
 
-struct SEGMENT_DESCRIPTOR {
-	short limit_low, base_low;
-	char base_mid, access_right;
-	char limit_high, base_high;
-};
-
-struct GATE_DESCRIPTOR {
-	short offset_low, selector;
-	char dw_count, access_right;
-	short offset_high;
-};
-
-void init_gdtidt(void);
-void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, int ar);
-void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar);
-void load_gdtr(int limit, int addr);
-void load_idtr(int limit, int addr);
+#include "bootpack.h"
 
 void init_gdtidt(void)
 {
-	struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *) 0x00270000;
-	struct GATE_DESCRIPTOR    *idt = (struct GATE_DESCRIPTOR    *) 0x0026f800;
+	struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *) ADR_GDT;
+	struct GATE_DESCRIPTOR    *idt = (struct GATE_DESCRIPTOR    *) ADR_IDT;
 	int i;
 
 	/* GDTの初期化 */
-	for (i = 0; i < 8192; i++) {
+	for (i = 0; i <= LIMIT_GDT / 8; i++) {
 		set_segmdesc(gdt + i, 0, 0, 0);
 	}
-	set_segmdesc(gdt + 1, 0xffffffff, 0x00000000, 0x4092);
-	set_segmdesc(gdt + 2, 0x0007ffff, 0x00280000, 0x409a);
-	load_gdtr(0xffff, 0x00270000);
+	set_segmdesc(gdt + 1, 0xffffffff,   0x00000000, AR_DATA32_RW);
+	set_segmdesc(gdt + 2, LIMIT_BOTPAK, ADR_BOTPAK, AR_CODE32_ER);
+	load_gdtr(LIMIT_GDT, ADR_GDT);
 
 	/* IDTの初期化 */
-	for (i = 0; i < 256; i++) {
+	for (i = 0; i <= LIMIT_IDT / 8; i++) {
 		set_gatedesc(idt + i, 0, 0, 0);
 	}
-	load_idtr(0x7ff, 0x0026f800);
+	load_idtr(LIMIT_IDT, ADR_IDT);
 
 	return;
 }
