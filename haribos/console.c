@@ -158,13 +158,13 @@ void cons_runcmd(char *cmdline, struct CONSOLE *cons, int *fat, unsigned int mem
 		cmd_dir(cons);
 	} else if (strncmp(cmdline, "type ", 5) == 0) {
 		cmd_type(cons, fat, cmdline);
-	} else if (strcmp(cmdline, "hlt") == 0) {
-		cmd_hlt(cons, fat);
 	} else if (cmdline[0] != 0) {
-		/* コマンドではなく、さらに空行でもない */
-		putfonts8_asc_sht(cons->sht, 8, cons->cur_y, COL8_FFFFFF, COL8_000000, "Bad command.", 12);
-		cons_newline(cons);
-		cons_newline(cons);
+		if (cmd_app(cons, fat, cmdline) == 0) {
+			/* コマンドではなく、アプリでもなく、さらに空行でもない */
+			putfonts8_asc_sht(cons->sht, 8, cons->cur_y, COL8_FFFFFF, COL8_000000, "Bad command.", 12);
+			cons_newline(cons);
+			cons_newline(cons);
+		}
 	}
 	return;
 }
@@ -247,12 +247,35 @@ void cmd_type(struct CONSOLE *cons, int *fat, char *cmdline)
 	return;
 }
 
-void cmd_hlt(struct CONSOLE *cons, int *fat)
+int cmd_app(struct CONSOLE *cons, int *fat, char *cmdline)
 {
 	struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;
-	struct FILEINFO *finfo = file_search("HLT.HRB", (struct FILEINFO *) (ADR_DISKIMG + 0x002600), 224);
+	struct FILEINFO *finfo;
 	struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *) ADR_GDT;
-	char *p;
+	char name[18], *p;
+	int i;
+
+	/* コマンドラインからファイル名を生成 */
+	for (i = 0; i < 13; i++) {
+		if (cmdline[i] <= ' ') {
+			break;
+		}
+		name[i] = cmdline[i];
+	}
+	name[i] = 0; /* とりあえずファイル名の後ろを0にする */
+
+	/* ファイルを探す */
+	finfo = file_search(name, (struct FILEINFO *) (ADR_DISKIMG + 0x002600), 224);
+	if (finfo == 0 && name[i - 1] != '.') {
+		/* 見つからなかったので後ろに".HRB"をつけてもう一度探してみる */
+		name[i    ] = '.';
+		name[i + 1] = 'H';
+		name[i + 2] = 'R';
+		name[i + 3] = 'B';
+		name[i + 4] = 0;
+		finfo = file_search(name, (struct FILEINFO *) (ADR_DISKIMG + 0x002600), 224);
+	}
+
 	if (finfo != 0) {
 		/* ファイルが見つかった場合 */
 		p = (char *) memman_alloc_4k(memman, finfo->size);
@@ -260,11 +283,9 @@ void cmd_hlt(struct CONSOLE *cons, int *fat)
 		set_segmdesc(gdt + 1003, finfo->size - 1, (int) p, AR_CODE32_ER);
 		farcall(0, 1003 * 8);
 		memman_free_4k(memman, (int) p, finfo->size);
-	} else {
-		/* ファイルが見つからなかった場合 */
-		putfonts8_asc_sht(cons->sht, 8, cons->cur_y, COL8_FFFFFF, COL8_000000, "File not found.", 15);
 		cons_newline(cons);
+		return 1;
 	}
-	cons_newline(cons);
-	return;
+	/* ファイルが見つからなかった場合 */
+	return 0;
 }
