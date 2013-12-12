@@ -5,7 +5,6 @@
 
 void make_window8(unsigned char *buf, int xsize, int ysize, char *title);
 void putfonts8_asc_sht(struct SHEET *sht, int x, int y, int c, int b, char *s, int l);
-void set490(struct FIFO32 *fifo, int mode);
 
 void HariMain(void)
 {
@@ -32,7 +31,6 @@ void HariMain(void)
 	io_out8(PIC0_IMR, 0xf8); /* PITとPIC1とキーボードを許可(11111000) */
 	io_out8(PIC1_IMR, 0xef); /* マウスを許可(11101111) */
 
-	set490(&fifo, 1);
 	timer = timer_alloc();
 	timer_init(timer, &fifo, 10);
 	timer_settime(timer, 1000);
@@ -196,19 +194,5 @@ void putfonts8_asc_sht(struct SHEET *sht, int x, int y, int c, int b, char *s, i
 	boxfill8(sht->buf, sht->bxsize, b, x, y, x + l * 8 - 1, y + 15);
 	putfonts8_asc(sht->buf, sht->bxsize, x, y, c, s);
 	sheet_refresh(sht, x, y, x + l * 8, y + 16);
-	return;
-}
-
-void set490(struct FIFO32 *fifo, int mode)
-{
-	int i;
-	struct TIMER *timer;
-	if (mode != 0) {
-		for (i = 0; i < 490; i++) {
-			timer = timer_alloc();
-			timer_init(timer, fifo, 1024 + i);
-			timer_settime(timer, 100 * 60 * 60 * 24 * 50 + i * 100);
-		}
-	}
 	return;
 }
