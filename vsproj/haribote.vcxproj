@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -18,13 +18,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -62,6 +62,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\haribos\haribote\!cons_nt.bat" />
+    <None Include="..\haribos\haribote\asmhead.nas" />
+    <None Include="..\haribos\haribote\ipl09.nas" />
+    <None Include="..\haribos\haribote\make.bat" />
+    <None Include="..\haribos\haribote\Makefile" />
+    <None Include="..\haribos\haribote\naskfunc.nas" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\haribos\haribote\bootpack.c" />
+    <ClCompile Include="..\haribos\haribote\console.c" />
+    <ClCompile Include="..\haribos\haribote\dsctbl.c" />
+    <ClCompile Include="..\haribos\haribote\fifo.c" />
+    <ClCompile Include="..\haribos\haribote\file.c" />
+    <ClCompile Include="..\haribos\haribote\graphic.c" />
+    <ClCompile Include="..\haribos\haribote\int.c" />
+    <ClCompile Include="..\haribos\haribote\keyboard.c" />
+    <ClCompile Include="..\haribos\haribote\memory.c" />
+    <ClCompile Include="..\haribos\haribote\mouse.c" />
+    <ClCompile Include="..\haribos\haribote\mtask.c" />
+    <ClCompile Include="..\haribos\haribote\sheet.c" />
+    <ClCompile Include="..\haribos\haribote\tek.c" />
+    <ClCompile Include="..\haribos\haribote\timer.c" />
+    <ClCompile Include="..\haribos\haribote\window.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\haribos\haribote\bootpack.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\haribos\haribote\hankaku.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
