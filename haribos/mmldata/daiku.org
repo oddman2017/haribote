@@ -1,0 +1,17 @@
+/* 「交響曲第9番 ニ短調 "合唱" op.125」より Ludwig van Beethoven  尾崎喜八作詞 */
+
+$E"SJIS";							T110L4
+
+									O4
+$K"晴れたる青空  漂う雲よ";			F+F+GA AGF+E DDEF+ F+.E8E2
+$K"小鳥は歌えり  林に森に";			F+F+GA AGF+E DDEF+ E.D8D2
+$K"心は爽やか  喜び満ちて";			EEF+D EF+8G8F+D EF+8G8F+E DE<A>
+$K"見交わす我らの  明るき笑顔";		F+& F+F+GA AGF+E DDEF+ E.D8D2
+
+									O5
+$K"花咲く丘べに  憩える友よ";		F+F+GA AGF+E DDEF+ F+.E8E2
+$K"吹く風爽やか  みなぎる陽射し";	F+F+GA AGF+E DDEF+ E.D8D2
+$K"心は穏やか  幸せ溢れ";			EEF+D EF+8G8F+D EF+8G8F+E DE<A>
+$K"響くは我らの  喜びの歌";			F+& F+F+GA AGF+E DDEF+ E.D8D2
+
+$K"";								R1
