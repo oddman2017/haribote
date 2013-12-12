@@ -75,12 +75,24 @@ void sheet_refreshmap(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1, in
 		if (by0 < 0) { by0 = 0; }
 		if (bx1 > sht->bxsize) { bx1 = sht->bxsize; }
 		if (by1 > sht->bysize) { by1 = sht->bysize; }
-		for (by = by0; by < by1; by++) {
-			vy = sht->vy0 + by;
-			for (bx = bx0; bx < bx1; bx++) {
-				vx = sht->vx0 + bx;
-				if (buf[by * sht->bxsize + bx] != sht->col_inv) {
+		if (sht->col_inv == -1) {
+			/* 透明色なし専用の高速版 */
+			for (by = by0; by < by1; by++) {
+				vy = sht->vy0 + by;
+				for (bx = bx0; bx < bx1; bx++) {
+					vx = sht->vx0 + bx;
 					map[vy * ctl->xsize + vx] = sid;
+				}
+			}
+		} else {
+			/* 透明色ありの一般版 */
+			for (by = by0; by < by1; by++) {
+				vy = sht->vy0 + by;
+				for (bx = bx0; bx < bx1; bx++) {
+					vx = sht->vx0 + bx;
+					if (buf[by * sht->bxsize + bx] != sht->col_inv) {
+						map[vy * ctl->xsize + vx] = sid;
+					}
 				}
 			}
 		}
