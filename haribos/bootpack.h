@@ -213,6 +213,7 @@ struct TASKCTL {
 	struct TASK tasks0[MAX_TASKS];
 };
 extern struct TIMER *task_timer;
+struct TASK *task_now(void);
 struct TASK *task_init(struct MEMMAN *memman);
 struct TASK *task_alloc(void);
 void task_run(struct TASK *task, int level, int priority);
