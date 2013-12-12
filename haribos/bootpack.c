@@ -12,7 +12,7 @@ void HariMain(void)
 	struct FIFO8 timerfifo;
 	char s[40], keybuf[32], mousebuf[128], timerbuf[8];
 	struct TIMER *timer, *timer2, *timer3;
-	int mx, my, i;
+	int mx, my, i, count = 0;
 	unsigned int memtotal;
 	struct MOUSE_DEC mdec;
 	struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;
@@ -75,8 +75,7 @@ void HariMain(void)
 	putfonts8_asc_sht(sht_back, 0, 32, COL8_FFFFFF, COL8_008484, s, 40);
 
 	for (;;) {
-		sprintf(s, "%010d", timerctl.count);
-		putfonts8_asc_sht(sht_win, 40, 28, COL8_000000, COL8_C6C6C6, s, 10);
+		count++;
 
 		io_cli();
 		if (fifo8_status(&keyfifo) + fifo8_status(&mousefifo) + fifo8_status(&timerfifo) == 0) {
@@ -127,8 +126,11 @@ void HariMain(void)
 				io_sti();
 				if (i == 10) {
 					putfonts8_asc_sht(sht_back, 0, 64, COL8_FFFFFF, COL8_008484, "10[sec]", 7);
+					sprintf(s, "%010d", count);
+					putfonts8_asc_sht(sht_win, 40, 28, COL8_000000, COL8_C6C6C6, s, 10);
 				} else if (i == 3) {
 					putfonts8_asc_sht(sht_back, 0, 80, COL8_FFFFFF, COL8_008484, "3[sec]", 6);
+					count = 0; /* 測定開始 */
 				} else {
 					/* 0か1 */
 					if (i != 0) {
