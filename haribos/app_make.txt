@@ -38,6 +38,7 @@ haribote.img : ../haribote/ipl10.bin ../haribote/haribote.sys $(APP).hrb \
 		wbinimg src:../haribote/ipl10.bin len:512 from:0 to:0 \
 		copy from:../haribote/haribote.sys to:@: \
 		copy from:$(APP).hrb to:@: \
+		copy from:../nihongo/nihongo.fnt to:@: \
 		imgout:haribote.img
 
 # 一般規則
