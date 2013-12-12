@@ -316,6 +316,13 @@ int *hrb_api(int edi, int esi, int ebp, int esp, int ebx, int edx, int ecx, int 
 	int ds_base = *((int *) 0xfe8);
 	struct TASK *task = task_now();
 	struct CONSOLE *cons = (struct CONSOLE *) *((int *) 0x0fec);
+	struct SHTCTL *shtctl = (struct SHTCTL *) *((int *) 0x0fe4);
+	struct SHEET *sht;
+	int *reg = &eax + 1;	/* eaxの次の番地 */
+		/* 保存のためのPUSHADを強引に書き換える */
+		/* reg[0] : EDI,   reg[1] : ESI,   reg[2] : EBP,   reg[3] : ESP */
+		/* reg[4] : EBX,   reg[5] : EDX,   reg[6] : ECX,   reg[7] : EAX */
+
 	if (edx == 1) {
 		cons_putchar(cons, eax & 0xff, 1);
 	} else if (edx == 2) {
@@ -324,6 +331,13 @@ int *hrb_api(int edi, int esi, int ebp, int esp, int ebx, int edx, int ecx, int 
 		cons_putstr1(cons, (char *) ebx + ds_base, ecx);
 	} else if (edx == 4) {
 		return &(task->tss.esp0);
+	} else if (edx == 5) {
+		sht = sheet_alloc(shtctl);
+		sheet_setbuf(sht, (char *) ebx + ds_base, esi, edi, eax);
+		make_window8((char *) ebx + ds_base, esi, edi, (char *) ecx + ds_base, 0);
+		sheet_slide(sht, 100, 50);
+		sheet_updown(sht, 3);	/* 3という高さはtask_aの上 */
+		reg[7] = (int) sht;
 	}
 	return 0;
 }
