@@ -1,9 +1,9 @@
-#include <stdio.h>		/* sprintf */
 #include <string.h>		/* strlen */
 #include "apilib.h"
 
 void putstr(int win, char *winbuf, int x, int y, int col, unsigned char *s);
 void wait(int i, int timer, char *keyflag);
+void setdec8(char *s, int i);
 
 static unsigned char charset[16 * 8] = {
 
@@ -156,7 +156,7 @@ next_group:
 					/* hit ! */
 					score += point;
 					point++;
-					sprintf(s, "%08d", score);
+					setdec8(s, score);
 					putstr(win, winbuf, 10, 0, 7, s);
 					if (high < score) {
 						high = score;
@@ -262,5 +262,17 @@ void wait(int i, int timer, char *keyflag)
 			keyflag[2 /* space */] = 1;
 		}
 	}
+	return;
+}
+
+void setdec8(char *s, int i)
+/* iを10進数表記でsに格納 */
+{
+	int j;
+	for (j = 7; j >= 0; j--) {
+		s[j] = '0' + i % 10;
+		i /= 10;
+	}
+	s[8] = 0;
 	return;
 }
