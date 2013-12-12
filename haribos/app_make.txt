@@ -26,7 +26,7 @@ default :
 # ファイル生成規則
 
 $(APP).bim : $(APP).obj $(APILIBPATH)apilib.lib Makefile ../app_make.txt
-	-$(OBJ2BIM) @$(RULEFILE) out:$(APP).bim map:$(APP).map stack:$(STACK) \
+	$(OBJ2BIM) @$(RULEFILE) out:$(APP).bim map:$(APP).map stack:$(STACK) \
 		$(APP).obj $(APILIBPATH)apilib.lib
 
 $(APP).hrb : $(APP).bim Makefile ../app_make.txt
