@@ -1,7 +1,7 @@
 ; haribote-ipl
 ; TAB=4
 
-CYLS	EQU		10				; どこまで読み込むか
+CYLS	EQU		20				; どこまで読み込むか
 
 		ORG		0x7c00			; このプログラムがどこに読み込まれるのか
 
