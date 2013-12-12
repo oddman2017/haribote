@@ -43,7 +43,7 @@ void HariMain(void)
 		0,   0,   0,   '_', 0,   0,   0,   0,   0,   0,   0,   0,   0,   '|', 0,   0
 	};
 	int key_shift = 0, key_leds = (binfo->leds >> 4) & 7, keycmd_wait = -1;
-	int j, x, y, mmx = -1, mmy = -1;
+	int j, x, y, mmx = -1, mmy = -1, mmx2 = 0;
 	struct SHEET *sht = 0, *key_win;
 
 	init_gdtidt();
@@ -253,6 +253,7 @@ void HariMain(void)
 										if (3 <= x && x < sht->bxsize - 3 && 3 <= y && y < 21) {
 											mmx = mx;	/* ウィンドウ移動モードへ */
 											mmy = my;
+											mmx2 = sht->vx0;
 										}
 										if (sht->bxsize - 21 <= x && x < sht->bxsize - 5 && 5 <= y && y < 19) {
 											/* 「×」ボタンクリック */
@@ -273,9 +274,8 @@ void HariMain(void)
 							/* ウィンドウ移動モードの場合 */
 							x = mx - mmx;	/* マウスの移動量を計算 */
 							y = my - mmy;
-							sheet_slide(sht, sht->vx0 + x, sht->vy0 + y);
-							mmx = mx;	/* 移動後の座標に更新 */
-							mmy = my;
+							sheet_slide(sht, (mmx2 + x + 2) & ~3, sht->vy0 + y);
+							mmy = my;	/* 移動後の座標に更新 */
 						}
 					} else {
 						/* 左ボタンを押していない */
