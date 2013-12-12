@@ -386,7 +386,7 @@ void console_task(struct SHEET *sheet, unsigned int memtotal)
 	struct TIMER *timer;
 	struct TASK *task = task_now();
 	int i, fifobuf[128], cursor_x = 16, cursor_y = 28, cursor_c = -1;
-	char s[30], cmdline[30];
+	char s[30], cmdline[30], *p;
 	struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;
 	int x, y;
 	struct FILEINFO *finfo = (struct FILEINFO *) (ADR_DISKIMG + 0x002600);
@@ -480,6 +480,64 @@ void console_task(struct SHEET *sheet, unsigned int memtotal)
 									cursor_y = cons_newline(cursor_y, sheet);
 								}
 							}
+						}
+						cursor_y = cons_newline(cursor_y, sheet);
+					} else if (cmdline[0] == 't' && cmdline[1] == 'y' && cmdline[2] == 'p' &&
+							cmdline[3] == 'e' && cmdline[4] == ' ') {
+						/* typeコマンド */
+						/* ファイル名を準備する */
+						for (y = 0; y < 11; y++) {
+							s[y] = ' ';
+						}
+						y = 0;
+						for (x = 5; y < 11 && cmdline[x] != 0; x++) {
+							if (cmdline[x] == '.' && y <= 8) {
+								y = 8;
+							} else {
+								s[y] = cmdline[x];
+								if ('a' <= s[y] && s[y] <= 'z') {
+									/* 小文字は大文字に直す */
+									s[y] -= 0x20;
+								} 
+								y++;
+							}
+						}
+						/* ファイルを探す */
+						for (x = 0; x < 224; ) {
+							if (finfo[x].name[0] == 0x00) {
+								break;
+							}
+							if ((finfo[x].type & 0x18) == 0) {
+								for (y = 0; y < 11; y++) {
+									if (finfo[x].name[y] != s[y]) {
+										goto type_next_file;
+									}
+								}
+								break; /* ファイルが見つかった */
+							}
+		type_next_file:
+							x++;
+						}
+						if (x < 224 && finfo[x].name[0] != 0x00) {
+							/* ファイルが見つかった場合 */
+							y = finfo[x].size;
+							p = (char *) (finfo[x].clustno * 512 + 0x003e00 + ADR_DISKIMG);
+							cursor_x = 8;
+							for (x = 0; x < y; x++) {
+								/* 1文字ずつ出力 */
+								s[0] = p[x];
+								s[1] = 0;
+								putfonts8_asc_sht(sheet, cursor_x, cursor_y, COL8_FFFFFF, COL8_000000, s, 1);
+								cursor_x += 8;
+								if (cursor_x == 8 + 240) {
+									cursor_x = 8;
+									cursor_y = cons_newline(cursor_y, sheet);
+								}
+							}
+						} else {
+							/* ファイルが見つからなかった場合 */
+							putfonts8_asc_sht(sheet, 8, cursor_y, COL8_FFFFFF, COL8_000000, "File not found.", 15);
+							cursor_y = cons_newline(cursor_y, sheet);
 						}
 						cursor_y = cons_newline(cursor_y, sheet);
 					} else if (cmdline[0] != 0) {
